@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta
+			http-equiv="X-UA-Compatible"
+			content="IE=edge"
+		/>
+		<meta
+			name="viewport"
+			content="width=device-width, initial-scale=1.0"
+		/>
+
+		<title>Document</title>
+
+		<style>
+			:root {
+				--hue: 223;
+				--white: hsl(var(--hue), 10%, 100%);
+				--lt-gray: hsl(var(--hue), 10%, 95%);
+				--gray1: hsl(var(--hue), 10%, 90%);
+				--gray2: hsl(var(--hue), 10%, 80%);
+				--gray7: hsl(var(--hue), 10%, 30%);
+				--gray9: hsl(var(--hue), 10%, 10%);
+				--primary: hsl(var(--hue), 90%, 55%);
+				--trans-dur: 0.3s;
+				font-size: calc(16px + (24 - 16) * (100vw - 320px) / (1280 - 320));
+			}
+
+			.range-input {
+				--input-hue: 60;
+				--percent: 50%;
+				background-color: var(--gray1);
+				background-image: linear-gradient(
+					hsl(var(--input-hue), 90%, 45%),
+					hsl(var(--input-hue), 90%, 45%)
+				);
+				background-size: var(--percent) 100%;
+				background-repeat: no-repeat;
+				border-radius: 0.25em;
+				display: block;
+				margin: 0.5em auto;
+				width: 100%;
+				max-width: 10em;
+				height: 0.5em;
+				transition: background-color var(--trans-dur);
+				-webkit-appearance: none;
+				appearance: none;
+				-webkit-tap-highlight-color: transparent;
+			}
+
+			.range-input:focus {
+				outline: transparent;
+			}
+
+			/* WebKit */
+			.range-input::-webkit-slider-thumb {
+				background-color: var(--white);
+				border: 0;
+				border-radius: 50%;
+				box-shadow: 0 0.125em 0.5em hsl(0, 0%, 0%, 0.3);
+				width: 1.5em;
+				height: 1.5em;
+				transition: background-color 0.15s linear;
+				-webkit-appearance: none;
+				appearance: none;
+			}
+			.range-input:focus::-webkit-slider-thumb,
+			.range-input::-webkit-slider-thumb:hover {
+				background-color: var(--lt-gray);
+			}
+
+			/* Firefox */
+			.range-input::-moz-range-thumb {
+				background-color: var(--white);
+				border: 0;
+				border-radius: 50%;
+				box-shadow: 0 0.125em 0.5em hsl(0, 0%, 0%, 0.3);
+				width: 1.5em;
+				height: 1.5em;
+				transition: background-color 0.15s linear;
+			}
+			.range-input:focus::-moz-range-thumb,
+			.range-input::-moz-range-thumb:hover {
+				background-color: var(--lt-gray);
+			}
+
+			@supports selector(:focus-visible) {
+				.range-input:focus::-webkit-slider-thumb {
+					background-color: var(--white);
+				}
+				.range-input:focus-visible::-webkit-slider-thumb,
+				.range-input::-webkit-slider-thumb:hover {
+					background-color: var(--lt-gray);
+				}
+				.range-input:focus::-moz-range-thumb {
+					background-color: var(--white);
+				}
+				.range-input:focus-visible::-moz-range-thumb,
+				.range-input::-moz-range-thumb:hover {
+					background-color: var(--lt-gray);
+				}
+			}
+		</style>
+	</head>
+	<body>
+		<section role="region">
+			<div id="output"></div>
+			<div
+				class="image-selection-area"
+				id="image-selection-area"
+			>
+
+            `<div class="image-selection-block">
+					<figure class="selected-image">
+                        <img src=  alt="" >
+                    </figure>
+
+					<div class="range-input-area">
+						<input
+							class="range-input"
+							type="range"
+						/>
+
+                        <span class="range-input-value"></span>
+					</div>
+				</div>`;
+        </div>
+		</section>
+
+		<script>
+			const imageSelectionArea = document.getElementById(
+				'image-selection-area'
+			);
+
+            console.log(imageSelectionArea);
+
+			class RangeIput {
+				constructor(input, imagePath) {
+                   
+					this.input = input;
+                    this.input.setAttribute('min' , 1)
+                    this.input.setAttribute('defaultValue' , 1)
+                    this.imageElement = input.closest('.image-selection-block').querySelector('img')
+					this.inputValueElement = input.nextElementSibling;
+					this.imageUrl = `${imagePath}/{{index}}.webp`;
+					this.input?.addEventListener('input', this.update.bind(this));
+					this.update();
+				}
+
+				update(e) {
+					let value = this.input.defaultValue;
+					this.inputValueElement.textContent = value;
+                    this.imageUrl = `${this.imageUrl.replace(
+													'{{index}}',
+													value || 1
+												)}`
+                    
+					// when manually set
+					if (e) {
+						value = e.target?.value;
+						this.inputValueElement.textContent = value;
+                        this.imageUrl = `${this.imageUrl.replace(
+													'{{index}}',
+													value || 1
+												)}`
+
+					}
+					// when initiated
+					else {
+						this.input.value = value;
+						this.inputValueElement.textContent = value;
+                        this.imageUrl = `${this.imageUrl.replace(
+													'{{index}}',
+													this.input.value || 1
+												)}`
+                                                 
+					}
+
+                    this.imageElement.src = this.imageUrl
+
+					
+
+					const min = this.input.min || 1;
+					const max = this.input.max || 100;
+					const percentRaw = ((value - min) / (max - min)) * 100;
+					const percent = +percentRaw.toFixed(2);
+
+					this.input?.style.setProperty('--percent', `${percent}%`);
+				}
+
+				
+			}
+
+			const allRangeInputs = document.querySelectorAll('.range-input');
+
+			allRangeInputs.forEach((input) => new RangeIput(input, '/images'));
+		</script>
+	</body>
+</html>
+
+
