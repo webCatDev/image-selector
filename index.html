@@ -110,11 +110,14 @@
 				class="image-selection-area"
 				id="image-selection-area"
 			>
-
-            `<div class="image-selection-block">
+				`
+				<div class="image-selection-block">
 					<figure class="selected-image">
-                        <img src=  alt="" >
-                    </figure>
+						<img
+							src="alt"
+							=""
+						/>
+					</figure>
 
 					<div class="range-input-area">
 						<input
@@ -122,10 +125,11 @@
 							type="range"
 						/>
 
-                        <span class="range-input-value"></span>
+						<span class="range-input-value"></span>
 					</div>
-				</div>`;
-        </div>
+				</div>
+				`;
+			</div>
 		</section>
 
 		<script>
@@ -133,15 +137,16 @@
 				'image-selection-area'
 			);
 
-            console.log(imageSelectionArea);
+			console.log(imageSelectionArea);
 
 			class RangeIput {
 				constructor(input, imagePath) {
-                   
 					this.input = input;
-                    this.input.setAttribute('min' , 1)
-                    this.input.setAttribute('defaultValue' , 1)
-                    this.imageElement = input.closest('.image-selection-block').querySelector('img')
+					this.input.setAttribute('min', 1);
+					this.input.setAttribute('defaultValue', 1);
+					this.imageElement = input
+						.closest('.image-selection-block')
+						.querySelector('img');
 					this.inputValueElement = input.nextElementSibling;
 					this.imageUrl = `${imagePath}/{{index}}.webp`;
 					this.input?.addEventListener('input', this.update.bind(this));
@@ -151,35 +156,25 @@
 				update(e) {
 					let value = this.input.defaultValue;
 					this.inputValueElement.textContent = value;
-                    this.imageUrl = `${this.imageUrl.replace(
-													'{{index}}',
-													value || 1
-												)}`
-                    
+					this.imageUrl = `${this.imageUrl.replace('{{index}}', value || 1)}`;
+
 					// when manually set
 					if (e) {
 						value = e.target?.value;
 						this.inputValueElement.textContent = value;
-                        this.imageUrl = `${this.imageUrl.replace(
-													'{{index}}',
-													value || 1
-												)}`
-
+						this.imageUrl = `${this.imageUrl.replace('{{index}}', value || 1)}`;
 					}
 					// when initiated
 					else {
 						this.input.value = value;
 						this.inputValueElement.textContent = value;
-                        this.imageUrl = `${this.imageUrl.replace(
-													'{{index}}',
-													this.input.value || 1
-												)}`
-                                                 
+						this.imageUrl = `${this.imageUrl.replace(
+							'{{index}}',
+							this.input.value || 1
+						)}`;
 					}
 
-                    this.imageElement.src = this.imageUrl
-
-					
+					this.imageElement.src = this.imageUrl;
 
 					const min = this.input.min || 1;
 					const max = this.input.max || 100;
@@ -188,8 +183,6 @@
 
 					this.input?.style.setProperty('--percent', `${percent}%`);
 				}
-
-				
 			}
 
 			const allRangeInputs = document.querySelectorAll('.range-input');
@@ -198,5 +191,3 @@
 		</script>
 	</body>
 </html>
-
-
